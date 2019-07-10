@@ -149,7 +149,7 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_note, menu);
         return true;
     }
 
@@ -167,9 +167,30 @@ public class NoteActivity extends AppCompatActivity {
         }else if(id == R.id.action_cancel){
             mIsCancelling = true;
             finish();
+        }else if(id == R.id.action_next){
+            moveNext();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_next);
+        int lastNoteIndex = DataManager.getInstance().getNotes().size() - 1;
+        item.setEnabled(mNotePosition < lastNoteIndex);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void moveNext() {
+        saveNote();
+
+        ++mNotePosition;
+        mNote = DataManager.getInstance().getNotes().get(mNotePosition);
+
+        saveOriginalNoteValues();
+        displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
+        invalidateOptionsMenu();
     }
 
     private void sendEmail() {
